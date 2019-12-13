@@ -54,7 +54,7 @@ public class Storenotesdetail_projects_with_lacks {
 		
 		System.out.println("list retrieved");
 
-//		printList();
+		printList();
 		
 		
 		// sprawdzanie dla kazdego projektu pojdeynczo
@@ -71,6 +71,7 @@ public class Storenotesdetail_projects_with_lacks {
 		
 		 RetriveAllobjectFromallProjects( conn ,listOfProjects_withLack) ;
 
+	//	RetriveAllobjectFromallProjects_test(conn, listOfProjects_withLack);
 		
 		System.out.println("RetriveAllobjectFromallProjects done " );
 		
@@ -103,6 +104,82 @@ public class Storenotesdetail_projects_with_lacks {
 	
 	
 	
+	public static void RetriveAllobjectFromallProjects_test(Connection conn, List<String> list) throws SQLException
+	{
+		
+		// storenotesdetail			
+		Statement s = conn.createStatement();
+				
+				ResultSet rs = s.executeQuery("select s.Leverancier, s.ORDERNUMMER, s.ARTIKELCODE, s.ARTIKELOMSCHRIJVING, \r\n" + 
+						"s.MONTAGE, s.MONTAGEOMSCHRIJVING, s.EENHEIDSPRIJS\r\n" + 
+						"from storenotesdetail s \r\n" + 
+						"left join artikel_kostprijs a \r\n" + 
+						"on s.ARTIKELCODE = a.ARTIKELCODE\r\n" + 
+						"where a.soort is null \r\n" + 
+						"and s.PROJECTNUMMER = '2/190551'");
+		
+		
+
+				
+				while(rs.next())
+				{
+					String project = "2/190551";
+					String Leverancier = rs.getString("Leverancier");
+					String ORDERNUMMER = rs.getString("ORDERNUMMER");
+					String ARTIKELCODE = rs.getString("ARTIKELCODE");
+					String ARTIKELOMSCHRIJVING = rs.getString("ARTIKELOMSCHRIJVING");
+					String MONTAGE = rs.getString("MONTAGE");
+					String MONTAGEOMSCHRIJVING = rs.getString("MONTAGEOMSCHRIJVING");
+					String EENHEIDSPRIJS = rs.getString("EENHEIDSPRIJS");
+		
+					MainObject obj = new MainObject(project,Leverancier,ORDERNUMMER,ARTIKELCODE,ARTIKELOMSCHRIJVING,MONTAGE,MONTAGEOMSCHRIJVING,EENHEIDSPRIJS);
+					
+					
+					missing_objects_storenotesdetail.add(obj);
+				}
+				
+				s.close();
+				rs.close();
+	
+		
+		//bestellingdetail <- bardzo spowalnia program a rezultat jest niewielki		
+		Statement s1 = conn.createStatement();
+				
+				ResultSet rs1 = s1.executeQuery("select s.Leverancier, s.ORDERNUMMER, s.ARTIKELCODE, s.ARTIKELOMSCHRIJVING, s.EENHEIDSPRIJS \r\n" + 
+						"                        from bestellingdetail s \r\n" + 
+						"                        left join artikel_kostprijs a  \r\n" + 
+						"                        on s.ARTIKELCODE = a.ARTIKELCODE\r\n" + 
+						"                        where a.soort is null \r\n" + 
+						"                        and s.AFDELING = '2'\r\n" + 
+						"                        and s.AFDELINGSEQ = '190551'");
+		
+		
+				
+				while(rs1.next())
+				{
+					String project = "2/190551";
+					String Leverancier = rs1.getString("Leverancier");
+					String ORDERNUMMER = rs1.getString("ORDERNUMMER");
+					String ARTIKELCODE = rs1.getString("ARTIKELCODE");
+					String ARTIKELOMSCHRIJVING = rs1.getString("ARTIKELOMSCHRIJVING");
+					String MONTAGE  = " -- ";
+					String MONTAGEOMSCHRIJVING = " -- ";
+					String EENHEIDSPRIJS = rs1.getString("EENHEIDSPRIJS");
+		
+					MainObject obj = new MainObject(project,Leverancier,ORDERNUMMER,ARTIKELCODE,ARTIKELOMSCHRIJVING,MONTAGE,MONTAGEOMSCHRIJVING,EENHEIDSPRIJS);
+					
+					
+					missing_objects_storenotesdetail.add(obj);
+				}
+				
+				s1.close();
+				rs1.close();
+		
+		
+		
+		
+	}
+	
 	
 
 	
@@ -121,6 +198,9 @@ public class Storenotesdetail_projects_with_lacks {
 						"on s.ARTIKELCODE = a.ARTIKELCODE\r\n" + 
 						"where a.soort is null \r\n" + 
 						"and s.PROJECTNUMMER = '"+list.get(i)+"'");
+		
+		
+
 				
 				while(rs.next())
 				{
@@ -144,79 +224,49 @@ public class Storenotesdetail_projects_with_lacks {
 		}
 		
 		//bestellingdetail <- bardzo spowalnia program a rezultat jest niewielki
-//		for(int i = 0 ; i < list.size(); i++)
-//		{			
-//		Statement s = conn.createStatement();
-//				
-//				ResultSet rs = s.executeQuery("select s.Leverancier, s.ORDERNUMMER, s.ARTIKELCODE, s.ARTIKELOMSCHRIJVING, s.EENHEIDSPRIJS \r\n" + 
-//						"                        from bestellingdetail s \r\n" + 
-//						"                        left join artikel_kostprijs a  \r\n" + 
-//						"                        on s.ARTIKELCODE = a.ARTIKELCODE\r\n" + 
-//						"                        where a.soort is null \r\n" + 
-//						"                        and s.AFDELING = '"+list.get(i).substring(0, 1)+"'\r\n" + 
-//						"                        and s.AFDELINGSEQ = '"+list.get(i).substring(1, list.get(i).length())+"'");
-//				
-//				while(rs.next())
-//				{
-//					String Leverancier = rs.getString("Leverancier");
-//					String ORDERNUMMER = rs.getString("ORDERNUMMER");
-//					String ARTIKELCODE = rs.getString("ARTIKELCODE");
-//					String ARTIKELOMSCHRIJVING = rs.getString("ARTIKELOMSCHRIJVING");
-//					String MONTAGE  = " -- ";
-//					String MONTAGEOMSCHRIJVING = " -- ";
-//					String EENHEIDSPRIJS = rs.getString("EENHEIDSPRIJS");
-//		
-//					MainObject obj = new MainObject(Leverancier,ORDERNUMMER,ARTIKELCODE,ARTIKELOMSCHRIJVING,MONTAGE,MONTAGEOMSCHRIJVING,EENHEIDSPRIJS);
-//					
-//					
-//					missing_objects_storenotesdetail.add(obj);
-//				}
-//				
-//				s.close();
-//				rs.close();
-//		}
+		for(int i = 0 ; i < list.size(); i++)
+		{			
+			
+
+			
+		Statement s = conn.createStatement();
+				
+				ResultSet rs = s.executeQuery("select s.Leverancier, s.ORDERNUMMER, s.ARTIKELCODE, s.ARTIKELOMSCHRIJVING, s.EENHEIDSPRIJS \r\n" + 
+						"                        from bestellingdetail s \r\n" + 
+						"                        left join artikel_kostprijs a  \r\n" + 
+						"                        on s.ARTIKELCODE = a.ARTIKELCODE\r\n" + 
+						"                        where a.soort is null \r\n" + 
+						"                        and s.AFDELING = '"+list.get(i).substring(0, 1)+"'\r\n" + 
+						"                        and s.AFDELINGSEQ = '"+list.get(i).substring(2, list.get(i).length())+"'");
+		
+		
+				
+				while(rs.next())
+				{
+					String project = list.get(i);
+					String Leverancier = rs.getString("Leverancier");
+					String ORDERNUMMER = rs.getString("ORDERNUMMER");
+					String ARTIKELCODE = rs.getString("ARTIKELCODE");
+					String ARTIKELOMSCHRIJVING = rs.getString("ARTIKELOMSCHRIJVING");
+					String MONTAGE  = " -- ";
+					String MONTAGEOMSCHRIJVING = " -- ";
+					String EENHEIDSPRIJS = rs.getString("EENHEIDSPRIJS");
+		
+					MainObject obj = new MainObject(project,Leverancier,ORDERNUMMER,ARTIKELCODE,ARTIKELOMSCHRIJVING,MONTAGE,MONTAGEOMSCHRIJVING,EENHEIDSPRIJS);
+					
+					
+					missing_objects_storenotesdetail.add(obj);
+				}
+				
+				s.close();
+				rs.close();
+		}
 		
 		
 		
 	}
 	
-	
-//	public static void RetrieveMissingObjectsStorenotesDetail(Connection conn) throws SQLException
-//	{
-//		Statement s = conn.createStatement();
-//		
-//		ResultSet rs = s.executeQuery("select s.Leverancier, s.ORDERNUMMER, s.ARTIKELCODE, s.ARTIKELOMSCHRIJVING, \r\n" + 
-//				"s.MONTAGE, s.MONTAGEOMSCHRIJVING, s.EENHEIDSPRIJS\r\n" + 
-//				"from storenotesdetail s \r\n" + 
-//				"left join artikel_kostprijs a \r\n" + 
-//				"on s.ARTIKELCODE = a.ARTIKELCODE\r\n" + 
-//				"where a.soort is null \r\n" + 
-//				"and s.PROJECTNUMMER = '2/190550'");
-//		
-//		while(rs.next())
-//		{
-//			String Leverancier = rs.getString("Leverancier");
-//			String ORDERNUMMER = rs.getString("ORDERNUMMER");
-//			String ARTIKELCODE = rs.getString("ARTIKELCODE");
-//			String ARTIKELOMSCHRIJVING = rs.getString("ARTIKELOMSCHRIJVING");
-//			String MONTAGE = rs.getString("MONTAGE");
-//			String MONTAGEOMSCHRIJVING = rs.getString("MONTAGEOMSCHRIJVING");
-//			String EENHEIDSPRIJS = rs.getString("EENHEIDSPRIJS");
-//
-//			MainObject obj = new MainObject(Leverancier,ORDERNUMMER,ARTIKELCODE,ARTIKELOMSCHRIJVING,MONTAGE,MONTAGEOMSCHRIJVING,EENHEIDSPRIJS);
-//			
-//			
-//			missing_objects_storenotesdetail.add(obj);
-//		}
-//		
-//		s.close();
-//		rs.close();
-//
-//	}
-	
 
-	
-	
 	
 	
 	public static List<String> RetriveList(Connection conn) throws SQLException

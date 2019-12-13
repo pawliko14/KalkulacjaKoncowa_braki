@@ -8,6 +8,13 @@ public class Parameters {
 	private static String PathOfSavingAnaliza_MaszynPDF ="C://Users/el08/Desktop/programiki/Lista_brakow_kalkulacja_koncowa/Analiza_maszyn.pdf";
 	private static String PathOfSavingAnaliza_Maszyn_kalkulacjaKoncowaPDF ="C://Users/el08/Desktop/programiki/Lista_brakow_kalkulacja_koncowa/Analiza_maszyn_Kalkulacja_koncowa.pdf";
 	
+	private static String SavingPath_Lista_brakow  = "C://Users/el08/Desktop/programiki/Lista_brakow_kalkulacja_koncowa/Lista_brakow.pdf";
+	
+	
+	
+	public static String getSavingPath_Lista_brakow() {
+		return SavingPath_Lista_brakow;
+	}
 	public static String getPathOfSavingNomenclatuurTxt() {
 		return PathOfSavingNomenclatuurTxt;
 	}
