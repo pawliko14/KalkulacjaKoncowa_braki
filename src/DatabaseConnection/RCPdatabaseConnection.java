@@ -14,7 +14,6 @@ public class RCPdatabaseConnection {
 			System.out.println(pass);
 			Class.forName("org.mariadb.jdbc.Driver");
 			Connection conn=DriverManager.getConnection("jdbc:mariadb://"+adresSerwera+"/test",user,pass);
-			//JOptionPane.showMessageDialog(null, "Connection Successful");
 			return conn;
 		}catch (Exception e)
 		{

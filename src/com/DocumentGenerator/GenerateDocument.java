@@ -39,7 +39,7 @@ public class GenerateDocument {
 		
 		
 		 PdfPTable table = null;
-		 PdfPTable table1 = null;
+		// PdfPTable table1 = null;
 
 		System.out.println("\ngenerowanie PDf1\n");
 		// GENEROWANIE DOKUMENTU PDF
@@ -88,7 +88,7 @@ public class GenerateDocument {
 	   			 }	   			 
 	   			 else 
 	   			 {
-	   	              Font font_main_project = new Font(bf, 23);
+	   	              Font font_main_project = new Font(bf, 22);
 	   	  
 	   				 
 	   	
@@ -104,14 +104,7 @@ public class GenerateDocument {
 		   		 table00.addCell(table_cell0000);
 		   			
 		   		 
-		   	  table.addCell(new PdfPCell(new Phrase("Project",font)));
-		        table.addCell(new PdfPCell(new Phrase("leverancier",font)));
-		        table.addCell(new PdfPCell(new Phrase("ordernummer",font)));
-		        table.addCell(new PdfPCell(new Phrase("artikelcode",font)));		       
-		        table.addCell(new PdfPCell(new Phrase("artikelomschrijving",font)));
-		        table.addCell(new PdfPCell(new Phrase("montage",font)));
-		        table.addCell(new PdfPCell(new Phrase("montageomschirjving",font)));
-		        table.addCell(new PdfPCell(new Phrase("eenhejdprijs",font)));
+		   	
 		   		 
 		   		PdfPCell cell10 = new PdfPCell(new Phrase("Projekt",font));
 		   		cell10.setHorizontalAlignment(Element.ALIGN_CENTER);

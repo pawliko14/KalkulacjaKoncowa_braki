@@ -4,7 +4,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.PrintStream;
 
-public class MainObject {
+public class MainObject implements Comparable<MainObject>{
 	
 	private String Project;
 	private String leverancier;
@@ -158,6 +158,17 @@ public class MainObject {
 		out.println("montageomschirjving: " + getMontageomschirjving());
 		out.println("eenhejdprijs: " + getEenhejdprijs());
 	
+	}
+
+
+	@Override
+	public int compareTo(MainObject m) {
+
+		if(getProject()== null || m.getProject() == null)
+		{
+			return 0;
+		}
+		return getProject().compareTo(m.getProject());
 	}
 	
 	

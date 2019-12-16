@@ -10,6 +10,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
@@ -19,26 +20,20 @@ import org.mariadb.jdbc.internal.com.read.dao.Results;
 import com.DocumentGenerator.GenerateDocument;
 import com.itextpdf.text.DocumentException;
 import com.objectsDAO.MainObject;
+import com.parameters.Parameters;
 
 
-
-/*
- *   DANE SA POPRWANIE POBIERANE, ZAPISYWANE.
- *   ZOSTALO DODAC ZAPISANIE DO PLIKU PDF
- *   
- *   NA KONIEC KOMPLETNY REFAKTOR TEGO PSEUDOKODU
- */
 
 public class Storenotesdetail_projects_with_lacks {
 	
 	private static List<String> List_of_Project_with_lacks;
 	public static List<MainObject> missing_objects_storenotesdetail; // do zmian
-	private static List<MainObject> missing_objects_bestellingdetail;
 
 	
 	public static void main(String[] args) throws SQLException, DocumentException, IOException
 	{
-		
+		PrintStream out = new PrintStream(new FileOutputStream(Parameters.GetPath_to_Log_file()));
+		Connection conn=DriverManager.getConnection("jdbc:mariadb://192.168.90.123/fatdb","listy","listy1234");
 		
 		System.out.println("program started");
 		
@@ -46,7 +41,7 @@ public class Storenotesdetail_projects_with_lacks {
 		List_of_Project_with_lacks = new ArrayList<String>();
 		missing_objects_storenotesdetail = new ArrayList<MainObject>();
 		
-		Connection conn=DriverManager.getConnection("jdbc:mariadb://192.168.90.123/fatdb","listy","listy1234");
+		
 		System.out.println("connection has been set");
 
 		
@@ -60,7 +55,6 @@ public class Storenotesdetail_projects_with_lacks {
 		// sprawdzanie dla kazdego projektu pojdeynczo
 		
 		System.out.println("retrieve all objects");
-	//	RetrieveMissingObjectsStorenotesDetail(conn);
 		
 		System.out.println("print all objects of projects");
 
@@ -82,11 +76,15 @@ public class Storenotesdetail_projects_with_lacks {
 		
 		/////////////////
 
-		PrintStream out = new PrintStream(new FileOutputStream("C:\\Users\\el08\\Desktop\\programiki\\Lista_brakow_kalkulacja_koncowa\\Lista.txt"));
+		
 
 		System.out.println("Print to file ended");
 		for(MainObject s : missing_objects_storenotesdetail)
 			s.PrintToFile(out);
+		
+		// sort
+		System.out.println("Sorting array:");
+		Collections.sort(missing_objects_storenotesdetail);
 		
 		
 		////////////////
@@ -223,7 +221,6 @@ public class Storenotesdetail_projects_with_lacks {
 				rs.close();
 		}
 		
-		//bestellingdetail <- bardzo spowalnia program a rezultat jest niewielki
 		for(int i = 0 ; i < list.size(); i++)
 		{			
 			
