@@ -1,5 +1,6 @@
 package com.databaseOpetations;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -9,7 +10,9 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collector;
@@ -29,13 +32,51 @@ public class Storenotesdetail_projects_with_lacks {
 	private static List<String> List_of_Project_with_lacks;
 	public static List<MainObject> missing_objects_storenotesdetail; // do zmian
 
+
 	
 	public static void main(String[] args) throws SQLException, DocumentException, IOException
 	{
-		PrintStream out = new PrintStream(new FileOutputStream(Parameters.GetPath_to_Log_file()));
+		SimpleDateFormat godz = new SimpleDateFormat("HH-mm");
+		SimpleDateFormat doNazwy2 = new SimpleDateFormat("yyyy.MM.dd");
+		Calendar date = Calendar.getInstance();
+		String nazwa;
+		
+		//LOG		
+		if(godz.format(date.getTime()).startsWith("06"))
+			nazwa = "output_kalk_koncowa.txt";
+		else
+			nazwa = "extra_output_kalk_koncowa.txt";
+		PrintStream out;
+		
+		try {
+			out = new PrintStream(new FileOutputStream(Parameters.GetPath_to_Log_file()));
+			System.setOut(out);
+			System.setErr(out);
+		} catch (FileNotFoundException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		System.out.println(godz.format(date.getTime()));
+		
+	
+		File theDir = new File(Parameters.getPath_to_folder()+"/"+doNazwy2.format(date.getTime()));
+		if (!theDir.exists()) {
+		    try{
+		        theDir.mkdir();
+		    } 
+		    catch(SecurityException se){
+		    	System.out.println("Blad w tworzeniu folderu z listami");
+		    }  
+		}
+		 String path = Parameters.getPath_to_folder()+"/"+doNazwy2.format(date.getTime());
+		
+		
+	//	PrintStream out = new PrintStream(new FileOutputStream(Parameters.GetPath_to_Log_file()));
 		Connection conn=DriverManager.getConnection("jdbc:mariadb://192.168.90.123/fatdb","listy","listy1234");
 		
 		System.out.println("program started");
+		
+		
 		
 		
 		List_of_Project_with_lacks = new ArrayList<String>();
@@ -52,21 +93,18 @@ public class Storenotesdetail_projects_with_lacks {
 		printList();
 		
 		
-		// sprawdzanie dla kazdego projektu pojdeynczo
+	//	GenerateDocument d = new GenerateDocument();	
+	//	d.Generate_Informations(listOfProjects_withLack);
 		
-		System.out.println("retrieve all objects");
 		
-		System.out.println("print all objects of projects");
+		
+		
+		
 
-//		for(MainObject s : missing_objects)
-//			s.PrintList();
-//		
+
 		
 		
 		 RetriveAllobjectFromallProjects( conn ,listOfProjects_withLack) ;
-
-	//	RetriveAllobjectFromallProjects_test(conn, listOfProjects_withLack);
-		
 		System.out.println("RetriveAllobjectFromallProjects done " );
 		
 		
@@ -78,9 +116,9 @@ public class Storenotesdetail_projects_with_lacks {
 
 		
 
-		System.out.println("Print to file ended");
-		for(MainObject s : missing_objects_storenotesdetail)
-			s.PrintToFile(out);
+//		System.out.println("Print to file ended");
+//		for(MainObject s : missing_objects_storenotesdetail)
+//			s.PrintToFile(out);
 		
 		// sort
 		System.out.println("Sorting array:");
@@ -89,10 +127,22 @@ public class Storenotesdetail_projects_with_lacks {
 		
 		////////////////
 		System.out.println("Document genetare");
-
-		GenerateDocument doc = new GenerateDocument();
 		
-			doc.Generate();
+		String name = "Lista_brakow.pdf";
+		File f = new File(path+ "/" +name);
+		if(f.exists() && !f.isDirectory())
+			name = godz.format(date.getTime())+"_" + name;
+		
+		
+		//test
+	//	name = "dupaapa.pdf";
+		
+		GenerateDocument doc = new GenerateDocument();		
+			doc.Generate(path + "//" + name);
+		
+		
+		
+		
 		
 		
 		System.out.println("program ended");
@@ -101,85 +151,6 @@ public class Storenotesdetail_projects_with_lacks {
 	}
 	
 	
-	
-	public static void RetriveAllobjectFromallProjects_test(Connection conn, List<String> list) throws SQLException
-	{
-		
-		// storenotesdetail			
-		Statement s = conn.createStatement();
-				
-				ResultSet rs = s.executeQuery("select s.Leverancier, s.ORDERNUMMER, s.ARTIKELCODE, s.ARTIKELOMSCHRIJVING, \r\n" + 
-						"s.MONTAGE, s.MONTAGEOMSCHRIJVING, s.EENHEIDSPRIJS\r\n" + 
-						"from storenotesdetail s \r\n" + 
-						"left join artikel_kostprijs a \r\n" + 
-						"on s.ARTIKELCODE = a.ARTIKELCODE\r\n" + 
-						"where a.soort is null \r\n" + 
-						"and s.PROJECTNUMMER = '2/190551'");
-		
-		
-
-				
-				while(rs.next())
-				{
-					String project = "2/190551";
-					String Leverancier = rs.getString("Leverancier");
-					String ORDERNUMMER = rs.getString("ORDERNUMMER");
-					String ARTIKELCODE = rs.getString("ARTIKELCODE");
-					String ARTIKELOMSCHRIJVING = rs.getString("ARTIKELOMSCHRIJVING");
-					String MONTAGE = rs.getString("MONTAGE");
-					String MONTAGEOMSCHRIJVING = rs.getString("MONTAGEOMSCHRIJVING");
-					String EENHEIDSPRIJS = rs.getString("EENHEIDSPRIJS");
-		
-					MainObject obj = new MainObject(project,Leverancier,ORDERNUMMER,ARTIKELCODE,ARTIKELOMSCHRIJVING,MONTAGE,MONTAGEOMSCHRIJVING,EENHEIDSPRIJS);
-					
-					
-					missing_objects_storenotesdetail.add(obj);
-				}
-				
-				s.close();
-				rs.close();
-	
-		
-		//bestellingdetail <- bardzo spowalnia program a rezultat jest niewielki		
-		Statement s1 = conn.createStatement();
-				
-				ResultSet rs1 = s1.executeQuery("select s.Leverancier, s.ORDERNUMMER, s.ARTIKELCODE, s.ARTIKELOMSCHRIJVING, s.EENHEIDSPRIJS \r\n" + 
-						"                        from bestellingdetail s \r\n" + 
-						"                        left join artikel_kostprijs a  \r\n" + 
-						"                        on s.ARTIKELCODE = a.ARTIKELCODE\r\n" + 
-						"                        where a.soort is null \r\n" + 
-						"                        and s.AFDELING = '2'\r\n" + 
-						"                        and s.AFDELINGSEQ = '190551'");
-		
-		
-				
-				while(rs1.next())
-				{
-					String project = "2/190551";
-					String Leverancier = rs1.getString("Leverancier");
-					String ORDERNUMMER = rs1.getString("ORDERNUMMER");
-					String ARTIKELCODE = rs1.getString("ARTIKELCODE");
-					String ARTIKELOMSCHRIJVING = rs1.getString("ARTIKELOMSCHRIJVING");
-					String MONTAGE  = " -- ";
-					String MONTAGEOMSCHRIJVING = " -- ";
-					String EENHEIDSPRIJS = rs1.getString("EENHEIDSPRIJS");
-		
-					MainObject obj = new MainObject(project,Leverancier,ORDERNUMMER,ARTIKELCODE,ARTIKELOMSCHRIJVING,MONTAGE,MONTAGEOMSCHRIJVING,EENHEIDSPRIJS);
-					
-					
-					missing_objects_storenotesdetail.add(obj);
-				}
-				
-				s1.close();
-				rs1.close();
-		
-		
-		
-		
-	}
-	
-	
-
 	
 	public static void RetriveAllobjectFromallProjects(Connection conn, List<String> list) throws SQLException
 	{
@@ -267,9 +238,7 @@ public class Storenotesdetail_projects_with_lacks {
 	
 	
 	public static List<String> RetriveList(Connection conn) throws SQLException
-	{
-		
-		
+	{	
 		// storenotes detail
 		
 				Statement s = conn.createStatement();
@@ -284,13 +253,10 @@ public class Storenotesdetail_projects_with_lacks {
 				while(rs.next()) {
 					
 					String afdeling = rs.getString("AFDELING");
-					String afdelingseq = rs.getString("AFDELINGSEQ");
+					String afdelingseq = rs.getString("AFDELINGSEQ");				
+					String project = afdeling + "/" + afdelingseq;					
 					
-					String project = afdeling + "/" + afdelingseq;
-					
-					
-					List_of_Project_with_lacks.add(project);
-					
+					List_of_Project_with_lacks.add(project);				
 				}
 				
 				s.close();
@@ -310,21 +276,17 @@ public class Storenotesdetail_projects_with_lacks {
 				while(rs.next()) {
 					
 					String afdeling = rs.getString("AFDELING");
-					String afdelingseq = rs.getString("AFDELINGSEQ");
-					
+					String afdelingseq = rs.getString("AFDELINGSEQ");			
 					String project = afdeling + "/" + afdelingseq;
-					
-					
+									
 					List_of_Project_with_lacks.add(project);
 					
-				}
-				
+				}		
 				s.close();
 				rs.close();
 				
 				
-			// remove duplicates
-				
+			// remove duplicates			
 		List<String> newList = 	List_of_Project_with_lacks.stream().distinct().collect(Collectors.toList());
 		
 		return newList;
