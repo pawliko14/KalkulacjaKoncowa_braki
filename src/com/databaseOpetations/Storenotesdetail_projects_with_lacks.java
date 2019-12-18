@@ -25,41 +25,34 @@ import com.itextpdf.text.DocumentException;
 import com.objectsDAO.MainObject;
 import com.parameters.Parameters;
 
+import DatabaseConnection.RCPdatabaseConnection;
+
 
 
 public class Storenotesdetail_projects_with_lacks {
 	
 	private static List<String> List_of_Project_with_lacks;
 	public static List<MainObject> missing_objects_storenotesdetail; // do zmian
+	private SimpleDateFormat godz = new SimpleDateFormat("HH-mm");
+	private SimpleDateFormat doNazwy2 = new SimpleDateFormat("yyyy.MM.dd");
+	private Calendar date = Calendar.getInstance();
+	private Connection conn = RCPdatabaseConnection.dbConnector();
 
 
-	
-	public static void main(String[] args) throws SQLException, DocumentException, IOException
+	public void StartProgram() throws SQLException, DocumentException, IOException
 	{
-		SimpleDateFormat godz = new SimpleDateFormat("HH-mm");
-		SimpleDateFormat doNazwy2 = new SimpleDateFormat("yyyy.MM.dd");
-		Calendar date = Calendar.getInstance();
-		String nazwa;
-		
-		//LOG		
-		if(godz.format(date.getTime()).startsWith("06"))
-			nazwa = "output_kalk_koncowa.txt";
-		else
-			nazwa = "extra_output_kalk_koncowa.txt";
-		PrintStream out;
+		 
+		PrintStream out;	
 		
 		try {
 			out = new PrintStream(new FileOutputStream(Parameters.GetPath_to_Log_file()));
 			System.setOut(out);
 			System.setErr(out);
 		} catch (FileNotFoundException e1) {
-			// TODO Auto-generated catch block
 			e1.printStackTrace();
-		}
-		System.out.println(godz.format(date.getTime()));
-		
+		}		
 	
-		File theDir = new File(Parameters.getPath_to_folder()+"/"+doNazwy2.format(date.getTime()));
+		File theDir = new File(Parameters.getPath_to_folder()+doNazwy2.format(date.getTime()));
 		if (!theDir.exists()) {
 		    try{
 		        theDir.mkdir();
@@ -68,11 +61,11 @@ public class Storenotesdetail_projects_with_lacks {
 		    	System.out.println("Blad w tworzeniu folderu z listami");
 		    }  
 		}
-		 String path = Parameters.getPath_to_folder()+"/"+doNazwy2.format(date.getTime());
 		
+	//	conn = DriverManager.getConnection("jdbc:mariadb://192.168.90.123/fatdb","listy","listy1234");
+
 		
-	//	PrintStream out = new PrintStream(new FileOutputStream(Parameters.GetPath_to_Log_file()));
-		Connection conn=DriverManager.getConnection("jdbc:mariadb://192.168.90.123/fatdb","listy","listy1234");
+		 String path = Parameters.getPath_to_folder()+"\\"+doNazwy2.format(date.getTime());	
 		
 		System.out.println("program started");
 		
@@ -111,15 +104,6 @@ public class Storenotesdetail_projects_with_lacks {
 		System.out.println("size of missing object list : " + missing_objects_storenotesdetail.size());
 
 		
-		
-		/////////////////
-
-		
-
-//		System.out.println("Print to file ended");
-//		for(MainObject s : missing_objects_storenotesdetail)
-//			s.PrintToFile(out);
-		
 		// sort
 		System.out.println("Sorting array:");
 		Collections.sort(missing_objects_storenotesdetail);
@@ -129,26 +113,19 @@ public class Storenotesdetail_projects_with_lacks {
 		System.out.println("Document genetare");
 		
 		String name = "Lista_brakow.pdf";
-		File f = new File(path+ "/" +name);
+		File f = new File(path+ "\\" +name);
 		if(f.exists() && !f.isDirectory())
 			name = godz.format(date.getTime())+"_" + name;
 		
 		
-		//test
-	//	name = "dupaapa.pdf";
 		
 		GenerateDocument doc = new GenerateDocument();		
-			doc.Generate(path + "//" + name);
-		
-		
-		
-		
-		
-		
-		System.out.println("program ended");
-		
-		
+			doc.Generate(path + "\\" + name);
+				
 	}
+	
+	
+
 	
 	
 	
