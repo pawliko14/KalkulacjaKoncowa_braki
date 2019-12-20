@@ -62,16 +62,10 @@ public class Storenotesdetail_projects_with_lacks {
 		    }  
 		}
 		
-	//	conn = DriverManager.getConnection("jdbc:mariadb://192.168.90.123/fatdb","listy","listy1234");
-
 		
 		 String path = Parameters.getPath_to_folder()+"\\"+doNazwy2.format(date.getTime());	
 		
 		System.out.println("program started");
-		
-		
-		
-		
 		List_of_Project_with_lacks = new ArrayList<String>();
 		missing_objects_storenotesdetail = new ArrayList<MainObject>();
 		
@@ -90,11 +84,6 @@ public class Storenotesdetail_projects_with_lacks {
 	//	d.Generate_Informations(listOfProjects_withLack);
 		
 		
-		
-		
-		
-
-
 		
 		
 		 RetriveAllobjectFromallProjects( conn ,listOfProjects_withLack) ;
@@ -216,15 +205,15 @@ public class Storenotesdetail_projects_with_lacks {
 	
 	public static List<String> RetriveList(Connection conn) throws SQLException
 	{	
-		// storenotes detail
-		
+		// storenotes detail  - > only for projects 2,6,14
 				Statement s = conn.createStatement();
 				ResultSet rs = s.executeQuery("select s.AFDELING, s.AFDELINGSEQ from storenotesdetail s \r\n" + 
-						"left join artikel_kostprijs a \r\n" + 
-						"on s.ARTIKELCODE = a.ARTIKELCODE\r\n" + 
-						"where a.soort is null \r\n" + 
-						"and s.AFDELING <> '500'\r\n" + 
-						"group by s.AFDELINGSEQ "); 
+						"                        left join artikel_kostprijs a \r\n" + 
+						"                        on s.ARTIKELCODE = a.ARTIKELCODE\r\n" + 
+						"                        where a.soort is null \r\n" + 
+						"                        and s.AFDELING <> '500'\r\n" + 
+						"                        and (s.AFDELING = '2' or s.AFDELING ='14')\r\n" + 
+						"                        group by s.AFDELINGSEQ"); 
 
 				
 				while(rs.next()) {
@@ -243,11 +232,12 @@ public class Storenotesdetail_projects_with_lacks {
 				
 				 s = conn.createStatement();
 				 rs = s.executeQuery("select s.AFDELING, s.AFDELINGSEQ from bestellingdetail s \r\n" + 
-						"left join artikel_kostprijs a \r\n" + 
-						"on s.ARTIKELCODE = a.ARTIKELCODE\r\n" + 
-						"where a.soort is null \r\n" + 
-						"and s.AFDELING <> '500'\r\n" + 
-						"group by s.AFDELINGSEQ "); 
+				 		"                        left join artikel_kostprijs a \r\n" + 
+				 		"                        on s.ARTIKELCODE = a.ARTIKELCODE\r\n" + 
+				 		"                        where a.soort is null \r\n" + 
+				 		"                        and s.AFDELING <> '500'\r\n" + 
+				 		"                        and (s.AFDELING = '2' or s.AFDELING ='14')\r\n" + 
+				 		"                        group by s.AFDELINGSEQ"); 
 
 				
 				while(rs.next()) {
